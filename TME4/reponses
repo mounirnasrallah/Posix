@@ -1,0 +1,86 @@
+/***************************
+******   Réponses
+***************************/
+
+
++ Exercice 1
+----------------------
+
+  init-sig.1.c :
+
+	     Rien ne s'affiche, car l'appel pause() met le processus en attente d'un signal,
+	     Mais une fois un signal SIGINT envoyé, le comportement defaut de ce signal est
+	     l'interruption du processus. Voilà pourquoi les lignes de codes suivantes ne 
+	     s'éxecutent pas.
+
+  init-sig.2.c :
+
+	     Rien ne s'affiche, car le programme bloque tout les signaux sauf le signal SIGINT.
+	     Donc après l'envoie d'un signal SIGINT, la réaction par defaut est donc de
+	     s'interrompre.
+
+  init-sig.3.c :
+
+	     Rien ne s'affiche, car le programme ignore les signaux SIGALRM et SIGINT.
+
+  init-sig.4.c :
+
+	     Le processus affiche : 
+	     
+	     AVANT sigsuspend
+	     ^Cn = 0; Signal recu : 2
+	     APRES 1er sigsuspend
+	     
+	     Ce qui est normal car le processus masque tout les signaux sauf le signal SIGINT, il 
+	     affiche donc le message "AVANT sigsuspend", puis en envoyant un signal SIGINT, on
+	     affiche "APRES 1er sigsuspend", et le masque de signal est restauré dans l'état où il 
+	     était avant l'appel à sigsuspend.
+	     
+  init-sig.5.c :
+	     
+	     Le processus affiche infiniment "reception de SIGALRM", et affiche "reception de SIGINT"
+	     quand on envoie un SIGINT, car on a une boucle while(1), qui appel sigsuspend
+	     sachant que la fonction sigalrm_handler qui est éxecuté en cas d'un signal SIGALRM
+	     refait un appel alarm(5).
+	     Car le processus masque tout les signaux sauf le signal SIGINT, et le signal SIGALRM,
+	     et que le masque de signal est restauré dans l'état où il était avant l'appel à 
+	     sigsuspend. 
+
++ Exercice 2
+-------------------
+
+	     Le processus affiche :
+	     
+	     PERE: 26646
+	     FILS: 26647
+	     26647> Fin
+
+	     puis se bloque.
+	     En fait le processus devient un processus zombie.
+	     
+	     En tapant la commande "ps u", on affiche les informations du processus :
+
+	     upmc 26647   0.0  0.0        0      0 s002  Z+    7:08AM   0:00.00 (voodoo)
+
+	     En faisant un "kill -SIGKILL 26647", on tente de tuer le processus.
+	     Mais on peut voir après éxecuter la command "ps u", on remarque que le processus zombie
+	     n'est toujours pas mort.
+
++ Exercice 3
+-------------------
+
+	Si le programme démasque SIGINT et SIGQUIT avant d'afficher s'ils sont pendants, si le processus
+	reçoit un SIGINT ou un SIGQUIT, alors il meurt avant d'afficher les signaux pendants.
+
++ Exercice 4
+-------------------
+
+	Cette solution ne résout pas le problème.
+
++ Exercice 5
+-------------------
+
+	La valeur maximale affichée pour le compteur est 1.
+	Ce nouveau programme ne résout pas le problème de l'exercice 3, car dès réception d'un SIGINT,
+	le programme meurt.
+	
